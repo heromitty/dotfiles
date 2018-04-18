@@ -1,6 +1,7 @@
 "---------------------------------------------------------------------------
 " 個人用設定ファイルです。主にGUIに関する設定を行います。
 " _gvimrcはgvimrcファイルの後に読込まれるため、
+" (さらに、_vimrcよりも後に読み込まれているっぽい)
 " ここに書かれた内容を上書きして設定することが出来ます。
 " _gvimrcは$HOMEまたは$VIMに置いておく必要があります。
 " $HOMEは$VIMよりも優先され、$HOMEでみつかった場合$VIMは読込まれません。
@@ -11,23 +12,14 @@
 
 "テキストの折り返しをしない
 set nowrap
+"テキストの自動折り返しを無効に
+set textwidth=0
 "行数表示
 set nu
 "カラー
-"colorscheme denim
-"エンコード
-":set encoding=utf-8
-":set termencoding=cp932
+colorscheme iceberg
 "フォント
-set guifont=MS_Gothic:h11:cSHIFTJIS
-
-"タブスペースの設定
-setlocal noexpandtab    "タブ入力を複数の空白入力に置き換えない
-setlocal tabstop=4	"画面上でタブ文字が占める幅
-setlocal shiftwidth=4	"自動インデントでずれる幅
-setlocal softtabstop=4  "連続した空白に対してタブキーやバックスペースキーでカーソルが動く幅
-setlocal autoindent     "改行時に前の行のインデントを継続する
-setlocal smartindent    "改行時に入力された行の末尾に合わせて次の行のインデントを増減する
+set guifont=MS_Gothic:h10:cSHIFTJIS
 
 "---------------------------------------------------------------------------
 " 検索の挙動に関する設定:
@@ -45,7 +37,3 @@ set columns=120
 set lines=60
 "ウィンドウの位置
 winpos 500 10
-"透過
-"gui
-"set transparency=220
-

@@ -2,9 +2,9 @@ scriptencoding utf-8
 " vim:set ts=8 sts=2 sw=2 tw=0: (この行に関しては:help modelineを参照)
 "
 " An example for a Japanese version gvimrc file.
-" 日本語版のデフォルトGUI設定ファイル(gvimrc) - Vim7用試作
+" 日本語版のデフォルトGUI設定ファイル(gvimrc) - Vim 7.4
 "
-" Last Change: 29-Mar-2015.
+" Last Change: 18-Apr-2018.
 " Maintainer:  MURAOKA Taro <koron.kaoriya@gmail.com>
 "
 " 解説:
@@ -46,7 +46,7 @@ endif
 " ユーザ優先設定($HOME/.gvimrc_first.vim)があれば読み込む。読み込んだ後に変
 " 数g:gvimrc_first_finishに非0な値が設定されていた場合には、それ以上の設定
 " ファイルの読込を中止する。
-if 0 && exists('$HOME') && filereadable($HOME . '/.gvimrc_first.vim')
+if 1 && exists('$HOME') && filereadable($HOME . '/.gvimrc_first.vim')
   unlet! g:gvimrc_first_finish
   source $HOME/.gvimrc_first.vim
   if exists('g:gvimrc_first_finish') && g:gvimrc_first_finish != 0
@@ -63,7 +63,7 @@ endif
 
 "---------------------------------------------------------------------------
 " カラー設定:
-colorscheme phd
+colorscheme default
 
 "---------------------------------------------------------------------------
 " フォント設定:
@@ -174,4 +174,4 @@ if has('printer')
   endif
 endif
 
-" Copyright (C) 2009-2013 KaoriYa/MURAOKA Taro
+" Copyright (C) 2009-2016 KaoriYa/MURAOKA Taro

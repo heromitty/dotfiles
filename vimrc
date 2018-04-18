@@ -2,9 +2,9 @@ scriptencoding utf-8
 " vim:set ts=8 sts=2 sw=2 tw=0: (この行に関しては:help modelineを参照)
 "
 " An example for a Japanese version vimrc file.
-" 日本語版のデフォルト設定ファイル(vimrc) - Vim7用試作
+" 日本語版のデフォルト設定ファイル(vimrc) - Vim 7.4
 "
-" Last Change: 01-Mar-2015.
+" Last Change: 16-Apr-2018.
 " Maintainer:  MURAOKA Taro <koron.kaoriya@gmail.com>
 "
 " 解説:
@@ -132,7 +132,9 @@ set smartcase
 " 編集に関する設定:
 "
 " タブの画面上での幅
-set tabstop=8
+set tabstop=2
+" インデントの幅
+set shiftwidth=2
 " タブをスペースに展開しない (expandtab:展開する)
 set noexpandtab
 " 自動的にインデントする (noautoindent:インデントしない)
@@ -176,7 +178,7 @@ set title
 " ファイル操作に関する設定:
 "
 " バックアップファイルを作成しない (次行の先頭の " を削除すれば有効になる)
-set nobackup
+"set nobackup
 
 
 "---------------------------------------------------------------------------
@@ -227,7 +229,7 @@ endif
 " KaoriYaでバンドルしているプラグインのための設定
 
 " autofmt: 日本語文章のフォーマット(折り返し)プラグイン.
-set formatexpr=autofmt#japanese#formatexpr()
+"set formatexpr=autofmt#japanese#formatexpr()
 
 " vimdoc-ja: 日本語ヘルプを無効化する.
 if kaoriya#switch#enabled('disable-vimdoc-ja')
@@ -239,4 +241,9 @@ if kaoriya#switch#enabled('disable-vimproc')
   let &rtp = join(filter(split(&rtp, ','), 'v:val !~ "[/\\\\]plugins[/\\\\]vimproc$"'), ',')
 endif
 
-" Copyright (C) 2009-2013 KaoriYa/MURAOKA Taro
+" go-extra: 同梱の vim-go-extra を無効化する
+if kaoriya#switch#enabled('disable-go-extra')
+  let &rtp = join(filter(split(&rtp, ','), 'v:val !~ "[/\\\\]plugins[/\\\\]golang$"'), ',')
+endif
+
+" Copyright (C) 2009-2016 KaoriYa/MURAOKA Taro
