@@ -40,8 +40,11 @@ if has('vim_starting')
 	"高速grep(Test中)
 	NeoBundle 'rking/ag.vim'
 
-	"即時実行
+	"即時実行(Test中)
 	NeoBundle 'thinca/vim-quickrun'
+
+  "バックグラウンドでgrepやmake実行ができる(Test中)
+  NeoBundle 'yuratomo/bg.vim'
 
 	"カラースキーマ
 	"	GitHubの"README.txt"が置いてあるページ(トップページ?)の上方に
@@ -74,13 +77,20 @@ function! s:open_buffer()
 endfunction
 
 "Ctrl+G...検索
-noremap <C-G> :call <SID>unite_grep()<CR>
-function! s:unite_grep()
-    "ルートディレクトリへ移動
-    "execute 'cd ' . g:vimrc_local
-    echo 'cd ' . g:vimrc_local
-	"search-bufferという名前のバッファへ結果を出力する
-    execute ':Unite vimgrep -buffer-name=result-buffer'
+noremap <C-G> :call <SID>my_grep()<CR>
+function! s:my_grep()
+  "ルートディレクトリへ移動
+  echo 'cd ' . g:vimrc_local
+  execute('cd ' . g:vimrc_local)
+  "▼BackGround grep(内部ではfindstrコマンドを使っているっぽい)
+  "   /S 再帰的に検索する
+  "   /R 正規表現
+  let l:target = input("Target: ")
+  let l:pattern = input("Pattern: ")
+  execute(':Background grep /s /r ' . l:pattern . ' ' . l:target)
+  "▼Unite vimgrep
+	"   search-bufferという名前のバッファへ結果を出力する
+  "execute ':Unite vimgrep -buffer-name=result-buffer'
 endfunction
 
 "Ctrl+R...検索結果を開く
@@ -101,10 +111,10 @@ endfunction
 " 自前コマンド
 
 "CRLFtoLF...改行コード変換コマンド(CrLF→LF)
-source $VIM/myscripts/crlf_to_lf.vim
+"source $VIM/myscripts/crlf_to_lf.vim
 
 "JsonViewer...JSONファイルを見やすくする
-source $VIM/myscripts/json.vim
+"source $VIM/myscripts/json.vim
 
 "RunPython...pythonで実行する
 command! RunPython call s:run_python()
@@ -113,19 +123,70 @@ function! s:run_python()
 endfunction
 
 "vimprocテスト
-"	vimshellを起動してコマンドの先頭に:を付ければvimコマンドが実行できる。
-"command! -nargs=* ProcTest call s:proc_test(<q-args>)
-"function! s:proc_test(args)
+" (memo)
+"   参考サイト：http://d.hatena.ne.jp/osyo-manga/20121009/1349765140
+"	  vimshellを起動してコマンドの先頭に:を付ければvimコマンドが実行できる。
+
+"autocommand group
+augroup vimproc-async-receive-test
+augroup END
+
 command! ProcTest call s:proc_test()
 function! s:proc_test()
-	let proc = vimproc#popen2('dir')
-	let res = ''
-	while !l:proc.stdout.eof
-		let l:res .= l:proc.stdout.read()
-	endwhile
-	let[cond, status] = proc.waitpid()
-	echo l:res
+  let g:proc_result = ""
+
+  echo 'cd ' . g:vimrc_local
+  execute 'cd ' . g:vimrc_local
+
+  "TODO:sys_am_auth.cppの検索結果しか引っかからないのはなぜか？
+  let s:proc = vimproc#popen2("findstr /s TEST *.cpp")
+  "pgroup_openでは、結果が空で返ってくる
+  "let s:proc = vimproc#pgroup_open("findstr /s TEST *.cpp")
+  let s:res = ""
+
+  "ユーザがキーを押さない間、呼び続けるオートコマンド
+  augroup vimproc-async-receive-test
+    execute 'autocmd! CursorHold,CursorHoldI * call s:async()'
+  augroup END
+
 endfunction
+
+function! s:async()
+  try
+      if !s:proc.stdout.eof
+        let s:res .= s:proc.stdout.read()
+      endif
+      if !l:proc.stderr.eof
+        let s:res .= s:proc.stderr.read()
+      endif
+      if !(s:proc.stdout.eof && s:proc.stderr.eof)
+        return 0
+      endif
+  catch
+      echom v:throwpoint
+  endtry
+
+  "オートコマンドの終了
+  augroup vimproc-async-receive-test
+    autocmd!
+  augroup END
+
+  call s:proc.stdout.close()
+  call s:proc.waitpid()
+  "echo s:res
+  let g:proc_result = s:res
+  execute ':Unite result'
+  unlet s:proc
+  unlet s:res
+endfunction
+
+":Unite resultでUniteバッファを開く
+let g:unite_source_alias_aliases = {
+\	"result" : {
+\		"source" : "output",
+\		"args" : 'echo g:proc_result'
+\	}
+\}
 
 "---------------------------------------------------------------------------
 " Unite.vim設定
@@ -160,9 +221,9 @@ set backupdir=>G:/temp/vim
 " (参考)http://www.kaoriya.net/blog/2014/03/30/
 set undodir=G:/temp/vim
 
-" 挙動に関する設定:
-"Windows操作
+"Windows操作(コピペなど)
 source $VIMRUNTIME/mswin.vim
+
 "tagsジャンプのときに、複数あるときは一覧表示する
 nnoremap <C-]> g<C-]>
 
