@@ -215,11 +215,11 @@ let g:NERDTreeQuitOnOpen=1
 "　以下セッティング情報
 
 " スワップファイルの保存先
-set backupdir=>G:/temp/vim
+set backupdir=>D:/temp/vim
 
 " undo情報ファイルの保存先
 " (参考)http://www.kaoriya.net/blog/2014/03/30/
-set undodir=G:/temp/vim
+set undodir=D:/temp/vim
 
 "Windows操作(コピペなど)
 source $VIMRUNTIME/mswin.vim
