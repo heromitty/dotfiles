@@ -34,17 +34,11 @@ if has('vim_starting')
 	"ファイラー
 	NeoBundle 'The-NERD-tree'
 
-	"タグ一覧を表示してくれる
-	NeoBundle 'taglist.vim'
-
-	"高速grep(Test中)
-	NeoBundle 'rking/ag.vim'
+  "バックグラウンドでgrepやmake実行ができる
+  NeoBundle 'yuratomo/bg.vim'
 
 	"即時実行(Test中)
 	NeoBundle 'thinca/vim-quickrun'
-
-  "バックグラウンドでgrepやmake実行ができる(Test中)
-  NeoBundle 'yuratomo/bg.vim'
 
 	"カラースキーマ
 	"	GitHubの"README.txt"が置いてあるページ(トップページ?)の上方に
@@ -93,17 +87,18 @@ function! s:my_grep()
   "execute ':Unite vimgrep -buffer-name=result-buffer'
 endfunction
 
+"「やり直し」と重複するのでオミット。
 "Ctrl+R...検索結果を開く
-noremap <C-R> :call <SID>unite_grep_result()<CR>
-function! s:unite_grep_result()
-    execute ':UniteResume result-buffer'
-endfunction
+"noremap <C-R> :call <SID>unite_grep_result()<CR>
+"function! s:unite_grep_result()
+"    execute ':UniteResume result-buffer'
+"endfunction
 
 
 "Ctrl+N...NERDTreeを開く
 noremap <C-N> :call <SID>open_nerd_tree()<CR>
 function! s:open_nerd_tree()
-    execute ':cd %:h'
+    execute 'lcd %:h'
     execute ':NERDTree'
 endfunction
 
@@ -122,82 +117,6 @@ function! s:run_python()
 	execute ':QuickRun python'
 endfunction
 
-"vimprocテスト
-" (memo)
-"   参考サイト：http://d.hatena.ne.jp/osyo-manga/20121009/1349765140
-"	  vimshellを起動してコマンドの先頭に:を付ければvimコマンドが実行できる。
-
-"autocommand group
-augroup vimproc-async-receive-test
-augroup END
-
-command! ProcTest call s:proc_test()
-function! s:proc_test()
-  let g:proc_result = ""
-
-  echo 'cd ' . g:vimrc_local
-  execute 'cd ' . g:vimrc_local
-
-  "TODO:sys_am_auth.cppの検索結果しか引っかからないのはなぜか？
-  let s:proc = vimproc#popen2("findstr /s TEST *.cpp")
-  "pgroup_openでは、結果が空で返ってくる
-  "let s:proc = vimproc#pgroup_open("findstr /s TEST *.cpp")
-  let s:res = ""
-
-  "ユーザがキーを押さない間、呼び続けるオートコマンド
-  augroup vimproc-async-receive-test
-    execute 'autocmd! CursorHold,CursorHoldI * call s:async()'
-  augroup END
-
-endfunction
-
-function! s:async()
-  try
-      if !s:proc.stdout.eof
-        let s:res .= s:proc.stdout.read()
-      endif
-      if !l:proc.stderr.eof
-        let s:res .= s:proc.stderr.read()
-      endif
-      if !(s:proc.stdout.eof && s:proc.stderr.eof)
-        return 0
-      endif
-  catch
-      echom v:throwpoint
-  endtry
-
-  "オートコマンドの終了
-  augroup vimproc-async-receive-test
-    autocmd!
-  augroup END
-
-  call s:proc.stdout.close()
-  call s:proc.waitpid()
-  "echo s:res
-  let g:proc_result = s:res
-  execute ':Unite result'
-  unlet s:proc
-  unlet s:res
-endfunction
-
-":Unite resultでUniteバッファを開く
-let g:unite_source_alias_aliases = {
-\	"result" : {
-\		"source" : "output",
-\		"args" : 'echo g:proc_result'
-\	}
-\}
-
-"---------------------------------------------------------------------------
-" Unite.vim設定
-
-"Unite grepコマンドをAgに差し替え
-if executable('Ag')
-  let g:unite_source_grep_command = 'Ag'
-  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
-  let g:unite_source_grep_recursive_opt = ''
-endif
-
 "---------------------------------------------------------------------------
 " Quickrun.vim設定
 
@@ -214,11 +133,14 @@ let g:NERDTreeQuitOnOpen=1
 "---------------------------------------------------------------------------
 "　以下セッティング情報
 
-" スワップファイルの保存先
-set backupdir=>G:/temp/vim
+"バックアップファイルを作成しない
+set nobackup
+" バックアップファイルの保存先
+"set backupdir=>G:/temp/vim
 
+" undoファイルを作成する
+set undofile
 " undo情報ファイルの保存先
-" (参考)http://www.kaoriya.net/blog/2014/03/30/
 set undodir=G:/temp/vim
 
 "Windows操作(コピペなど)
@@ -231,8 +153,8 @@ nnoremap <C-]> g<C-]>
 let s:current_path = getcwd()
 if s:current_path != $HOME
 	let g:vimrc_local = s:current_path
-	let s:vimrc_local = s:current_path . '\.vimrc.local'
-	if filereadable(s:vimrc_local)
+	"let l:vimrc_local = s:current_path . '\.vimrc.local'
+	if filereadable(s:current_path . '\.vimrc.local')
 		source .vimrc.local
 	endif
 endif
