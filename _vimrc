@@ -133,15 +133,25 @@ let g:NERDTreeQuitOnOpen=1
 "---------------------------------------------------------------------------
 "　以下セッティング情報
 
+<<<<<<< HEAD
 "バックアップファイルを作成しない
 set nobackup
 " バックアップファイルの保存先
 "set backupdir=>G:/temp/vim
+=======
+" スワップファイルの保存先
+set backupdir=>D:/temp/vim
+>>>>>>> 017a0b2873176ddcf6f1d1f8165ad618d7a87a15
 
 " undoファイルを作成する
 set undofile
 " undo情報ファイルの保存先
+<<<<<<< HEAD
 set undodir=G:/temp/vim
+=======
+" (参考)http://www.kaoriya.net/blog/2014/03/30/
+set undodir=D:/temp/vim
+>>>>>>> 017a0b2873176ddcf6f1d1f8165ad618d7a87a15
 
 "Windows操作(コピペなど)
 source $VIMRUNTIME/mswin.vim
