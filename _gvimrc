@@ -19,8 +19,9 @@ set nu
 "カラー
 colorscheme iceberg
 "フォント
-set guifont=MS_Gothic:h10:cSHIFTJIS
-
+"set guifont=MS_Gothic:h10:cSHIFTJIS
+set guifont=M+_1mn:h11:cSHIFTJIS:qDRAFT
+set linespace=0 "行間隔の設定
 "---------------------------------------------------------------------------
 " 検索の挙動に関する設定:
 
