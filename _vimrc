@@ -25,8 +25,8 @@ if has('vim_starting')
 	NeoBundle 'Shougo/neomru.vim' 
 	"ファイラー
 	NeoBundle 'The-NERD-tree'
-    "バックグラウンドでgrepやmake実行ができる
-    NeoBundle 'yuratomo/bg.vim'
+  "バックグラウンドでgrepやmake実行ができる
+  NeoBundle 'yuratomo/bg.vim'
 	"即時実行(Test中)
 	NeoBundle 'thinca/vim-quickrun'
 	"カラースキーマ
@@ -37,15 +37,20 @@ if has('vim_starting')
 	NeoBundle 'vim-scripts/newspaper.vim'
 	NeoBundle 'ciaranm/inkpot'
 	NeoBundle 'cocopon/iceberg.vim'
-	NeoBundle 'altercation/solarized'
 	NeoBundle 'jonathanfilip/vim-lucius'
 	NeoBundle 'jeetsukumaran/vim-nefertiti'
+	NeoBundle 'rhysd/vim-color-spring-night'
+	NeoBundle 'kamwitsta/nordisk'
+	NeoBundle 'MaxSt/FlatColor'
+
 	call neobundle#end()
 endif 
 filetype plugin indent on
+
 "---------------------------------------------------------------------------
 " グローバル変数
 let g:root = $VIM
+
 "---------------------------------------------------------------------------
 " オートコマンド
 " 自動的にカレントディレクトリを編集ファイルと同じディレクトリに変更する
@@ -64,8 +69,21 @@ augroup vimrc
     autocmd!
     execute(':call CurrentSetting()')
 augroup END
+
 "---------------------------------------------------------------------------
-" キーマップ一覧
+" JSONビューア起動
+command! -nargs=? Jq call s:Jq(<f-args>)
+function! s:Jq(...)
+    if 0 == a:0
+        let l:arg = "."
+    else
+        let l:arg = a:1
+    endif
+    execute "%! jq-win64 \"" . l:arg . "\""
+endfunction
+
+"---------------------------------------------------------------------------
+" キーマップ
 "Ctrl+B...バッファ一覧
 noremap <C-B> :call <SID>open_buffer()<CR>
 function! s:open_buffer()
@@ -102,28 +120,38 @@ function! s:open_nerd_tree()
     let l:current_file_path = expand('%:p')
     execute(':NERDTree ' . l:current_file_path)
 endfunction
+
 "---------------------------------------------------------------------------
-" 自前コマンド
+" 自作コマンド
 "CRLFtoLF...改行コード変換コマンド(CrLF→LF)
 "source $VIM/myscripts/crlf_to_lf.vim
 
 "JsonViewer...JSONファイルを見やすくする
 "source $VIM/myscripts/json.vim
 
-"RunPython...pythonで実行する
-command! RunPython call s:run_python()
+"Py...編集中のものをpythonで実行する
+command! RunPy call s:run_python()
 function! s:run_python()
-	execute ':QuickRun python'
+	"execute ':QuickRun python'
+	execute ':!python %'
 endfunction
+
+"---------------------------------------------------------------------------
+" bg.vim設定
+"grep検索時のルートとなるパスを設定する
+ let g:bg_grep_path = g:root
+
 "---------------------------------------------------------------------------
 " Quickrun.vim設定
 "runの結果を画面分割して表示する
 let g:quickrun_config={'*': {'split': ''}}
+
 "---------------------------------------------------------------------------
 " NERDtree設定
 "ファイルを開いた後も、NERDTreeを自動的に閉じるかどうか
 "0: 閉じない 1:閉じる
 let g:NERDTreeQuitOnOpen=1
+
 "---------------------------------------------------------------------------
 "　以下セッティング情報
 "バックアップファイルを作成しない
@@ -133,8 +161,11 @@ set nobackup
 " undoファイルを作成する
 set undofile
 " undo情報ファイルの保存先
-set undodir=G:/temp/vim
+set undodir=F:/temp/vim
 "Windows操作(コピペなど)
 source $VIMRUNTIME/mswin.vim
 "tagsジャンプのときに、複数あるときは一覧表示する
 nnoremap <C-]> g<C-]>
+
+
+
